@@ -1,0 +1,11 @@
+﻿Build started 22.12.2015 19:30:24.
+     1>Project "c:\Users\Lenovo\documents\visual studio 2013\Projects\GridGameSolver\GridGameSolver\GridGameSolver.vcxproj" on node 2 (ClCompile target(s)).
+     1>ClCompile:
+         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /sdl /Od /Oy- /D _MBCS /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc120.pdb" /Gd /TP /analyze- /errorReport:prompt Node.cpp
+         Skipping... (no relevant changes detected)
+         Node.cpp
+     1>Done Building Project "c:\Users\Lenovo\documents\visual studio 2013\Projects\GridGameSolver\GridGameSolver\GridGameSolver.vcxproj" (ClCompile target(s)).
+
+Build succeeded.
+
+Time Elapsed 00:00:00.16
