@@ -9,24 +9,27 @@ class Node
 {
 public:
 	Node();
-	Node(Node* parent, int generation, int positionX, int positionY, std::vector<std::vector<Vector2>>* PositionVectorVector);
+	Node(Node* parent, int generation, Vector2 position, std::vector<std::vector<Vector2>>* PositionVectorVector, Vector2 limits);
 	~Node();
 	void Run();
-	bool CheckPosition(int directionX, int directionY);
+	bool CheckPosition(Vector2 positionToCheck);
 	bool CheckAllDirections();
-	void CreateNewNodeOnPosition(int positionX, int positionY);
+	void CreateNewNodeOnPosition(Vector2 position);
 	Node* GetGeneration(int generation);
 	Node* GetParent();
 	void SetParent(Node* parent);
 	int GetGeneration();
 	void SetGeneration(int generation);
-	int GetPositionX();
-	int GetPositionY();
+	Vector2 GetPosition();
 	void AddToPositionVector();
+	void CreatePositionVector(Node* lastNode);
 private:
+	bool CheckLimits(Vector2 positionToCheck);
+	bool CheckParents(Vector2 positionToCheck);
 	Node* parent;
 	int generation;
-	int positionX, positionY; 
+	Vector2 position;
+	Vector2 limits;
 	// If this is heavy, can we make a wrapper class that holds the information,
 	// and has private positionVector. Only function addVector.
 	std::vector<std::vector<Vector2>>* positionVectorVector;
