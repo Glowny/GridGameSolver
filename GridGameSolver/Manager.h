@@ -27,8 +27,9 @@ public:
 	void CreateAlphabetIndexMap();
 	void UserInput();
 	void FindMatchingWords();
-	void CreateMatch(std::string string, std::vector<Vector2> positions);
-	int CheckStringWithIndexing(std::string* string);
+	void CreateMatch(std::string string, int vectorID, int size);
+	void CheckStringWithIndexing(int positionIndex);
+	bool CompareShortest(std::string* longWord, std::string* shortWord);
 	void ShowResults();
 	bool CheckString(std::string* string);
 	std::string CreateStringFromPositionVector(std::vector<Vector2>* positionVector);

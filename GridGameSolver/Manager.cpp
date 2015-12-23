@@ -42,6 +42,7 @@ void Manager::CreatePositionVectorVector()
 			root->CreateNewNodeOnPosition(position);
 		}
 	} 
+	std::cout << "Node creation done" << std::endl;
 }
 void Manager::LoadDictionary(std::string filename)
 {
@@ -84,6 +85,7 @@ bool Manager::CheckRareFirstLetter(char letter)
 {
 	if (letter == 'À' || letter == 'Ã' || letter == 'Å' || letter == 'š')
 		return false;
+	return true;
 }
 
 
@@ -106,6 +108,7 @@ void Manager::CreateAlphabetIndexMap()
 			indexes.x = currentStartIndex;
 			indexes.y = currentEndIndex;
 			// Add begin and end index to map where key is the first charachter
+
 			indexAreaCharMap[currentChar] = indexes;
 			
 			// Set the new first charachter
@@ -120,33 +123,62 @@ void Manager::CreateAlphabetIndexMap()
 // (LoadDictionary, CreatePositionVectorVector)
 void Manager::UserInput()
 {
-	input[0][0] = 'a';	input[1][0] = 'l';	input[2][0] = 'k';	input[3][0] = 'o';
-	input[0][1] = 'i';	input[1][1] = 'l';	input[2][1] = 'o';	input[3][1] = 'h';
-	input[0][2] = 't';	input[1][2] = 'o';	input[2][2] = 'n';	input[3][2] = 'a';
-	input[0][3] = 'e';	input[1][3] = 'i';	input[2][3] = 'p';	input[3][3] = 'p';
+	std::cout << "Give me a 16-letter word to fill 4x4 grid. For example: " << std::endl;
+	std::cout << "abcdefghijklmnop will be used on grid this way:" << std::endl;
+
+	std::cout << " _ _ _ _" << std::endl;
+	std::cout << "|a|b|c|d|" << std::endl;
+	std::cout << " _ _ _ _" << std::endl;
+	std::cout << "|e|f|g|h|" << std::endl;
+	std::cout << " _ _ _ _" << std::endl;
+	std::cout << "|i|j|k|l|" << std::endl;
+	std::cout << " _ _ _ _" << std::endl;
+	std::cout << "|m|n|o|p|" << std::endl;
+	std::cout << " _ _ _ _" << std::endl;
+
+	std::cout << "Extra input will be cut. Give zero(0) to use default input" << std::endl;
+
+	std::string inputString;
+	std::cin >> inputString;
+
+	if (inputString[0] == '0' || inputString.size() < 16)
+	{
+		input[0][0] = 's';	input[1][0] = 'a';	input[2][0] = 'n';	input[3][0] = 'i';
+		input[0][1] = 't';	input[1][1] = 'a';	input[2][1] = 'a';	input[3][1] = 'a';
+		input[0][2] = 'b';	input[1][2] = 't';	input[2][2] = 's';	input[3][2] = 'i';
+		input[0][3] = 't';	input[1][3] = 'o';	input[2][3] = 'e';	input[3][3] = 'n';
+	}
+	else
+	{
+		int inputIndex = 0;
+		for (int x = 0; x < 4; x++)
+		{
+			for (int y = 0; y < 4; y++)
+			{
+				input[x][y] = inputString[inputIndex];
+				inputIndex++;
+			}
+		}
+	}
+
 }
 
 void Manager::FindMatchingWords()
 {
 	for (unsigned int i = 0; i < positionVectorVector.size(); i++)
 	{
-		std::string testString;
-		testString = CreateStringFromPositionVector(&positionVectorVector[i]);
-		int size = CheckStringWithIndexing(&testString);
-		if (size != 0)
-		{
-			testString.resize(size);
-			std::vector<Vector2> positionVector = positionVectorVector[i];
-			positionVector.resize(size);
-			CreateMatch(testString, positionVector);
-		}
+		 CheckStringWithIndexing(i);
 	}
 }
-void Manager::CreateMatch(std::string string, std::vector<Vector2> positions)
+void Manager::CreateMatch(std::string string, int vectorID, int size)
 {
 	MatchingString match;
+
 	match.string = string;
-	match.locationVector = positions;
+	match.string.resize(size);
+	match.locationVector = positionVectorVector[vectorID];
+	match.locationVector.resize(size);
+
 	bool push = true;
 	for (unsigned int i = 0; i < matches.size(); i++)
 	{	
@@ -158,25 +190,40 @@ void Manager::CreateMatch(std::string string, std::vector<Vector2> positions)
 	if (push)
 		matches.push_back(match);
 }
-int Manager::CheckStringWithIndexing(std::string* string)
+void Manager::CheckStringWithIndexing(int positionIndex)
 {
-	Vector2 beginEnd = indexAreaCharMap[string->at(0)];
-	for (unsigned int i = beginEnd.x; i <= beginEnd.y; i++)
+	std::string testString;
+	testString = CreateStringFromPositionVector(&positionVectorVector[positionIndex]);
+
+	Vector2 beginEnd = indexAreaCharMap[testString[0]];
+
+	for (int i = beginEnd.x; i <= beginEnd.y; i++)
 	{
-		// Get current word
-		std::string tempString = *string;
 		// Get current checked word size.
 		unsigned int currentWordSize = shortenedDictionary[i].size();
 		
 		// Resize the temporary word to same size as word we are comparing it to.
-		tempString.resize(currentWordSize);
-
-		if (shortenedDictionary[i] == tempString)
-			return currentWordSize;
+		if (CompareShortest(&testString, &shortenedDictionary[i]))
+		{
+			CreateMatch(testString, positionIndex, currentWordSize);
+		}
 	}
-	return 0;
 }
-
+bool Manager::CompareShortest(std::string* longWord, std::string* shortWord)
+{
+	// If longword is shorter than shortword do not compare.
+	if (longWord->size() < shortWord->size())
+		return false;
+	// Go throught every shortWord letter, and if any of them differs, return false.
+	for (int i = 0; i < shortWord->size(); i++)
+	{
+		{
+			if (longWord->at(i) != shortWord->at(i))
+			return false;
+		}
+	}
+	return true;
+}
 bool Manager::CheckString(std::string* string)
 {
 	for (unsigned int i = 0; i < dictionary.size(); i++)
