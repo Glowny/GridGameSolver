@@ -67,16 +67,24 @@ void Manager::CutExtraDictionary()
 {
 	for (unsigned int i = 0; i < dictionary.size(); i++)
 	{
-		// Remove words longer than 16 char. Or it has - at beginning
-		if (dictionary[i].size() <= 16 && dictionary[i][0] != '-')
+		// Remove words longer than 16 char. Or it has - at beginning, or letters not often used.
+		if (dictionary[i].size() <= 16 && dictionary[i][0] != '-' && CheckRareFirstLetter(dictionary[i][0]))
 		{
+			// Change first letter to lowercase to help this
+			char charToChange = dictionary[i][0];
+			dictionary[i][0] = tolower(charToChange);
+
 			shortenedDictionary.push_back(dictionary[i]);
 		}
 	}
 	std::cout << "Smaller or equal than 16 shortened dictionary size: " << shortenedDictionary.size() << std::endl;
 
 }
-
+bool Manager::CheckRareFirstLetter(char letter)
+{
+	if (letter == 'À' || letter == 'Ã' || letter == 'Å' || letter == 'š')
+		return false;
+}
 
 
 void Manager::CreateAlphabetIndexMap()
@@ -92,16 +100,18 @@ void Manager::CreateAlphabetIndexMap()
 		if (currentString[0] != currentChar)
 		{
 			// Last index where this letter is first letter.
-			currentEndIndex = i -1;
+			// TODO: check if it is i-1, this might work too
+			currentEndIndex = i;
 			Vector2 indexes;
 			indexes.x = currentStartIndex;
 			indexes.y = currentEndIndex;
 			// Add begin and end index to map where key is the first charachter
 			indexAreaCharMap[currentChar] = indexes;
-
+			
 			// Set the new first charachter
 			currentStartIndex = i;
 			currentChar = currentString[0];
+			// REORDER V AND W TO BE ON CORRECT POSITIONS, AND CREATE A NEW DICTIONARY
 		}
 	}
 }
@@ -110,22 +120,10 @@ void Manager::CreateAlphabetIndexMap()
 // (LoadDictionary, CreatePositionVectorVector)
 void Manager::UserInput()
 {
-	input[0][0] = 'a';
-	input[1][0] = 'i';
-	input[2][0] = 'k';
-	input[3][0] = 'a';
-	input[0][1] = 'k';
-	input[1][1] = 'i';
-	input[2][1] = 'v';
-	input[3][1] = 'a';
-	input[0][2] = 'a';
-	input[1][2] = 's';
-	input[2][2] = 'i';
-	input[3][2] = 'a';
-	input[0][3] = 'o';
-	input[1][3] = 'p';
-	input[2][3] = 'p';
-	input[3][3] = 'i';
+	input[0][0] = 'a';	input[1][0] = 'l';	input[2][0] = 'k';	input[3][0] = 'o';
+	input[0][1] = 'i';	input[1][1] = 'l';	input[2][1] = 'o';	input[3][1] = 'h';
+	input[0][2] = 't';	input[1][2] = 'o';	input[2][2] = 'n';	input[3][2] = 'a';
+	input[0][3] = 'e';	input[1][3] = 'i';	input[2][3] = 'p';	input[3][3] = 'p';
 }
 
 void Manager::FindMatchingWords()

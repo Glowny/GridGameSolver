@@ -6,6 +6,8 @@
 #include <string>
 #include <iostream>
 #include <fstream>
+#include <stdio.h>
+#include <ctype.h>
 struct MatchingString
 {
 	std::string string;
@@ -21,6 +23,7 @@ public:
 	void CreatePositionVectorVector();
 	void LoadDictionary(std::string filename);
 	void CutExtraDictionary();
+	bool CheckRareFirstLetter(char letter);
 	void CreateAlphabetIndexMap();
 	void UserInput();
 	void FindMatchingWords();
