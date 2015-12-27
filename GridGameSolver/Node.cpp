@@ -1,6 +1,6 @@
 #include "Node.h"
-
-
+Vector2 Node::limits;
+std::vector<std::vector<Vector2>>* Node::positionVectorVector;
 Node::Node()
 {
 }
@@ -10,13 +10,12 @@ Node::~Node()
 {
 }
 
-Node::Node(Node* parent, int generation, Vector2 position, std::vector<std::vector<Vector2>>* positionVectorVector, Vector2 limits)
+Node::Node(Node* parent, int generation, Vector2 position)
 {
 	this->parent = parent;
 	this->generation = generation;
 	this->position = position;
-	this->positionVectorVector = positionVectorVector;
-	this->limits = limits;
+
 }
 
 void Node::Run()
@@ -71,8 +70,38 @@ bool Node::CheckAllDirections()
 	bool lastNode = true;
 	Vector2 positionToCheck;
 
+	// Check all nine directions.
+	for (int x = -1; x <= 1; x++)
+	{
+		for (int y = -1; y <= 1; y++)
+		{
+			// if we are cheking own location.
+			if (y == 0 && x == 0)
+				continue;
+
+			positionToCheck.x = position.x - x; positionToCheck.y = position.y - y;
+			// If x-direction is over or under the limits, we can skip all tests on y-direction.
+			if (positionToCheck.x > limits.x || positionToCheck.x < 0)
+				break;
+			// If y-direction is over or under the limits, we can skip this test.
+			if (positionToCheck.y > limits.y || positionToCheck.y < 0)
+				continue;
+			
+		
+			if (CheckPosition(positionToCheck))
+			{
+				CreateNewNodeOnPosition(positionToCheck);
+				lastNode = false;
+			}
+			
+
+		}
+	}
+
+	// TODO: include later
 	// Check all four directions
 	// TODO: Make this better looking
+	/*
 	positionToCheck.x = position.x - 1; positionToCheck.y = position.y;
 	if (CheckPosition(positionToCheck))
 	{
@@ -104,6 +133,7 @@ bool Node::CheckAllDirections()
 		CreateNewNodeOnPosition(positionToCheck);
 		lastNode = false;
 	}
+	*/
 	
 	return lastNode;
 }
@@ -114,7 +144,7 @@ void Node::CreateNewNodeOnPosition(Vector2 newPosition)
 	int newNodeGeneration = generation + 1;
 
 	// Create new node, set parent as this node.
-	Node* node = new Node(this, newNodeGeneration, newPosition, positionVectorVector, limits);
+	Node* node = new Node(this, newNodeGeneration, newPosition);
 
 	// Set the new node to start searching for new node locations.
 	node->Run();
@@ -131,7 +161,6 @@ void Node::AddToPositionVector()
 {
 	std::vector<Vector2> temporaryPositions;
 
-	// DOES NOT GET HERE 22.12
 	for (int i = generation; i > 0; i--)
 	{
 		// Make sure generation is not 1.

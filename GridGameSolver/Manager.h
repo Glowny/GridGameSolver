@@ -1,8 +1,8 @@
 #pragma once
 #include <vector>
 #include <map>
-#include "Vector2.h"
 #include "Node.h"
+#include "Rotations.h"
 #include <string>
 #include <iostream>
 #include <fstream>
@@ -21,11 +21,17 @@ public:
 	~Manager();
 	void Run();
 	void CreatePositionVectorVector();
+	void CutExtraPositions();
+	void CreateSymmetricalPositionVectors(int startIndex, int endIndex, int type);
 	void LoadDictionary(std::string filename);
-	void CutExtraDictionary();
-	bool CheckRareFirstLetter(char letter);
+	void CutExtraDictionary(int maxLenght, int minLenght);
+	void RemakeDictionary();
+	void SaveRemadeDictionary();
+	void LoadRemadeDictionary();
+	bool CheckRareFirstLetter(int dictionaryIndex);
 	void CreateAlphabetIndexMap();
 	void UserInput();
+	void SetOptions();
 	void FindMatchingWords();
 	void CreateMatch(std::string string, int vectorID, int size);
 	void CheckStringWithIndexing(int positionIndex);
@@ -34,13 +40,25 @@ public:
 	bool CheckString(std::string* string);
 	std::string CreateStringFromPositionVector(std::vector<Vector2>* positionVector);
 	// Map for different letter's indexes
-	std::map<char, Vector2> indexAreaCharMap;
+	std::map<std::string, Vector2> indexAreaCharMap;
 
 	std::vector<std::vector<Vector2>> positionVectorVector;
 	std::vector<std::string> dictionary;
 	std::vector<std::string> shortenedDictionary;
+	std::vector<std::string> finalDictionary;
 	char input[4][4];
 	std::vector<MatchingString> matches;
 	Node* root;
+private:
+	// User sets.
+	unsigned int maxWordLenght, minWordLenght;
+	bool xModeEnabled;
+	bool preDone;
+	Vector2 limits;
+	//
+	std::vector<std::string> temp√Words;
+	std::vector<std::string> temp≈Words;
+	std::vector<std::string> tempöWords;
+	std::vector<std::string> tempwWords;
 };
 
